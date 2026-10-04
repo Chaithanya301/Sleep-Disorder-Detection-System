@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sleep Disorder Prediction</title>
+</head>
+<body>
+    <h1>Sleep Disorder Prediction</h1>
+    <form id="predictionForm">
+        <!-- Add prediction input fields similar to data collection form -->
+        <label>Age: <input type="number" name="age" required></label>
+        <label>Gender: 
+            <select name="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </label>
+        
+        <label>Sleep Duration (hours): <input type="number" step="0.1" name="sleep_duration"></label>
+        <label>Sleep Quality (1-10): <input type="number" min="1" max="10" name="sleep_quality"></label>
+        <label>Stress Level (1-10): <input type="number" min="1" max="10" name="stress_level"></label>
+        
+        <!-- Facial Image Upload for Prediction -->
+        <label>Upload Facial Image for Prediction: 
+            <input type="file" name="facial_image" accept="image/*" capture="camera">
+        </label>
+        
+        <!-- Audio Recording for Prediction -->
+        <label>Record Voice for Prediction: 
+            <input type="file" name="audio_record" accept="audio/*" capture="microphone">
+        </label>
+        
+        <button type="submit">Predict Sleep Disorder</button>
+    </form>
+
+    <div id="predictionResult"></div>
+</body>
+</html>

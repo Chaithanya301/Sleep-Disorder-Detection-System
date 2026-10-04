@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Disorder Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const steps = document.querySelectorAll('.step');
+            const nextButtons = document.querySelectorAll('.next-btn');
+            const prevButtons = document.querySelectorAll('.prev-btn');
+            const progressBar = document.getElementById('progress-bar');
+            let currentStep = 0;
+
+            function updateProgressBar() {
+                const progress = (currentStep / (steps.length - 1)) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('hidden', index !== stepIndex);
+                });
+                updateProgressBar();
+            }
+
+            nextButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Basic validation
+                    const currentStepElement = steps[currentStep];
+                    const inputs = currentStepElement.querySelectorAll('input, select');
+                    let isValid = true;
+
+                    inputs.forEach(input => {
+                        if (!input.value) {
+                            input.classList.add('border-red-500');
+                            isValid = false;
+                        } else {
+                            input.classList.remove('border-red-500');
+                        }
+                    });
+
+                    if (isValid) {
+                        currentStep = Math.min(currentStep + 1, steps.length - 1);
+                        showStep(currentStep);
+                    }
+                });
+            });
+
+            prevButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentStep = Math.max(currentStep - 1, 0);
+                    showStep(currentStep);
+                });
+            });
+
+            // Initial setup
+            showStep(0);
+        });
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 h-1">
+            <div id="progress-bar" class="bg-blue-500 h-1 transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <form action="/predict" method="post" class="p-6">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Sleep Disorder Prediction</h2>
+
+            <!-- Personal Information Step -->
+            <div class="step">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Age</label>
+                        <input 
+                            type="number" 
+                            name="age" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your age"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Gender</label>
+                        <select 
+                            name="gender" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end">
+                        <button class="next-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Occupation and Sleep Details Step -->
+            <div class="step hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Occupation</label>
+                        <select 
+                            name="occupation" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select Occupation</option>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Nurse">Nurse</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Sleep Duration (hours)</label>
+                        <input 
+                            type="number" 
+                            step="0.01" 
+                            name="sleep_duration" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter sleep duration"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Quality of Sleep (1-10)</label>
+                        <input 
+                            type="number" 
+                            min="1" 
+                            max="10" 
+                            name="quality_of_sleep" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Rate your sleep quality"
+                        >
+                    </div>
+                    <div class="flex justify-between">
+                        <button class="prev-btn px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Previous
+                        </button>
+                        <button class="next-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Physical and Health Details Step -->
+            <div class="step hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Physical Activity Level</label>
+                        <input 
+                            type="number" 
+                            name="physical_activity_level" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter physical activity level"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Stress Level (1-10)</label>
+                        <input 
+                            type="number" 
+                            min="1" 
+                            max="10" 
+                            name="stress_level" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Rate your stress level"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">BMI Category</label>
+                        <select 
+                            name="bmi_category" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select BMI Category</option>
+                            <option value="Underweight">Underweight</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Overweight">Overweight</option>
+                            <option value="Obese">Obese</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-between">
+                        <button class="prev-btn px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Previous
+                        </button>
+                        <button class="next-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Health Metrics Step -->
+            <div class="step hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Blood Pressure (Systolic/Diastolic)</label>
+                        <input 
+                            type="text" 
+                            name="blood_pressure" 
+                            pattern="\d+/\d+" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="e.g., 120/80"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Heart Rate</label>
+                        <input 
+                            type="number" 
+                            name="heart_rate" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your heart rate"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Daily Steps</label>
+                        <input 
+                            type="number" 
+                            name="daily_steps" 
+                            required 
+                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter number of daily steps"
+                        >
+                    </div>
+                    <div class="flex justify-between">
+                        <button class="prev-btn px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Previous
+                        </button>
+                        <input 
+                            type="submit" 
+                            value="Predict Sleep Disorder" 
+                            class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 cursor-pointer"
+                        >
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .result {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="result">
+        <h2>Sleep Disorder Prediction</h2>
+        <p>Predicted Sleep Disorder: <strong>{{ prediction }}</strong></p>
+    </div>
+    <a href="/" class="back-link">Back to Prediction</a>
+</body>
+</html>

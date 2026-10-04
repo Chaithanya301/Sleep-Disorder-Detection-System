@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Disorder Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Prediction and Overview -->
+            <div class="col-span-4 bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-indigo-700 mb-4">Sleep Disorder Prediction</h2>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-gray-600">Predicted Disorder:</p>
+                        <h3 class="text-2xl font-bold text-indigo-600">Sleep Apnea</h3>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Confidence:</p>
+                        <h3 class="text-2xl font-bold text-indigo-600">78%</h3>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Risk Level:</p>
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">Moderate</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Details -->
+            <div class="col-span-8 bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-indigo-700 mb-4">User Health Metrics</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Age</p>
+                        <p class="font-semibold">35 Years</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Gender</p>
+                        <p class="font-semibold">Male</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Occupation</p>
+                        <p class="font-semibold">Engineer</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">BMI Category</p>
+                        <p class="font-semibold">Normal</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Stress Level</p>
+                        <p class="font-semibold">6/10</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Systolic BP</p>
+                        <p class="font-semibold">120</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Heart Rate</p>
+                        <p class="font-semibold">72 bpm</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Daily Steps</p>
+                        <p class="font-semibold">8,500</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Previous Readings Table -->
+            <div class="col-span-12 bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-4">Previous Readings</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">Timestamp</th>
+                                <th scope="col" class="px-4 py-3">Sleep Duration</th>
+                                <th scope="col" class="px-4 py-3">Sleep Quality</th>
+                                <th scope="col" class="px-4 py-3">Stress Level</th>
+                                <th scope="col" class="px-4 py-3">Heart Rate</th>
+                                <th scope="col" class="px-4 py-3">Daily Steps</th>
+                                <th scope="col" class="px-4 py-3">Predicted Disorder</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td class="px-4 py-3">2024-01-15</td>
+                                <td class="px-4 py-3">6.5 hrs</td>
+                                <td class="px-4 py-3">Moderate</td>
+                                <td class="px-4 py-3">6/10</td>
+                                <td class="px-4 py-3">72 bpm</td>
+                                <td class="px-4 py-3">8,500</td>
+                                <td class="px-4 py-3 font-semibold text-red-600">Sleep Apnea</td>
+                            </tr>
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td class="px-4 py-3">2024-01-10</td>
+                                <td class="px-4 py-3">6.2 hrs</td>
+                                <td class="px-4 py-3">Low</td>
+                                <td class="px-4 py-3">7/10</td>
+                                <td class="px-4 py-3">75 bpm</td>
+                                <td class="px-4 py-3">7,200</td>
+                                <td class="px-4 py-3 font-semibold text-yellow-600">Insomnia</td>
+                            </tr>
+                            <tr class="bg-white hover:bg-gray-50">
+                                <td class="px-4 py-3">2024-01-05</td>
+                                <td class="px-4 py-3">7.0 hrs</td>
+                                <td class="px-4 py-3">High</td>
+                                <td class="px-4 py-3">5/10</td>
+                                <td class="px-4 py-3">70 bpm</td>
+                                <td class="px-4 py-3">9,000</td>
+                                <td class="px-4 py-3 font-semibold text-green-600">Normal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Trend Chart -->
+            <div class="col-span-12 bg-white rounded-2xl shadow-lg p-6 h-[700px]">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-4">Health Metrics Trend</h2>
+                <canvas id="trendChart" width="100%" height="100%"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Script -->
+    <script>
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan 1', 'Jan 5', 'Jan 10', 'Jan 15'],
+                datasets: [
+                    {
+                        label: 'Sleep Quality',
+                        data: [8, 7, 6.5, 6.2],
+                        borderColor: '#6366F1',
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Stress Level',
+                        data: [5, 6, 7, 6],
+                        borderColor: '#FBBF24',
+                        fill: false,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

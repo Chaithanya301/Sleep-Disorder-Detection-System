@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Camera Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white h-screen flex items-center justify-center">
+    <!-- Container -->
+    <div class="w-full max-w-4xl p-4">
+        <h1 class="text-3xl font-bold text-center mb-6">Real-Time Camera Prediction</h1>
+        
+        <!-- Camera View & Prediction -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <!-- Camera Feed -->
+            <div class="relative">
+                <video id="camera" autoplay class="w-full rounded-lg border border-gray-700 shadow-md"></video>
+                <canvas id="canvas" class="hidden"></canvas>
+            </div>
+
+            <!-- Prediction Display -->
+            <div class="flex flex-col items-center justify-center bg-gray-800 rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-semibold mb-2">Prediction</h2>
+                <p id="prediction" class="text-2xl font-bold text-green-400">--</p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-6">
+            <p class="text-gray-400">Powered by AI Predictions</p>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas');
+        const predictionText = document.getElementById('prediction');
+        const ctx = canvas.getContext('2d');
+        const backendUrl = 'https://your-backend-endpoint.com/predict'; // Replace with your backend URL
+
+        // Access Camera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Camera access is required to use this app.');
+            }
+        }
+
+        // Capture Image and Send to Backend
+        async function captureAndSend() {
+            // Set canvas size to video size
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw video frame to canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas to Blob (image)
+            canvas.toBlob(async (blob) => {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('image', blob, 'frame.png');
+
+                try {
+                    // Send to backend
+                    const response = await fetch(backendUrl, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    // Parse response
+                    const data = await response.json();
+                    if (data && data.prediction) {
+                        predictionText.textContent = data.prediction;
+                    } else {
+                        predictionText.textContent = 'No prediction';
+                    }
+                } catch (error) {
+                    console.error('Error sending image:', error);
+                    predictionText.textContent = 'Error';
+                }
+            }, 'image/png');
+        }
+
+        // Start the camera and set interval to capture every second
+        startCamera();
+        setInterval(captureAndSend, 1000);
+    </script>
+</body>
+</html>

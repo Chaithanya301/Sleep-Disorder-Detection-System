@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Sleep Analysis Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-600">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    </svg>
+                    <span class="text-2xl font-bold text-purple-700">Sleep Analytics</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="lastUpdate" class="text-sm text-gray-600"></div>
+                    <a href="/newform" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">New Assessment</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <!-- Alert Section -->
+            <div id="alertSection" class="mb-6"></div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sleep Quality Score</h3>
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p id="avgSleepQuality" class="text-3xl font-bold text-purple-600">-/10</p>
+                            <p class="text-sm text-gray-500">Average Quality</p>
+                        </div>
+                        <div id="qualityTrend" class="text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Sleep Duration</h3>
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p id="avgSleepDuration" class="text-3xl font-bold text-blue-600">- hrs</p>
+                            <p class="text-sm text-gray-500">Average Duration</p>
+                        </div>
+                        <div id="durationTrend" class="text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Drowsiness Risk</h3>
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p id="avgDrowsiness" class="text-3xl font-bold text-red-600">-%</p>
+                            <p class="text-sm text-gray-500">Average Risk Level</p>
+                        </div>
+                        <div id="drowsinessTrend" class="text-sm font-medium"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Health Score</h3>
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p id="healthScore" class="text-3xl font-bold text-green-600">-</p>
+                            <p class="text-sm text-gray-500">Overall Health</p>
+                        </div>
+                        <div id="healthTrend" class="text-sm font-medium"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Assessment Details -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Latest Assessment Details</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Sleep Duration</p>
+                        <p id="currentSleepDuration" class="text-xl font-semibold text-gray-900">- hrs</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Quality Rating</p>
+                        <p id="currentSleepQuality" class="text-xl font-semibold text-gray-900">-/10</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Drowsiness State</p>
+                        <p id="currentDrowsinessState" class="text-xl font-semibold text-gray-900">-</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Heart Rate</p>
+                        <p id="currentHeartRate" class="text-xl font-semibold text-gray-900">- bpm</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Daily Steps</p>
+                        <p id="currentSteps" class="text-xl font-semibold text-gray-900">-</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Stress Level</p>
+                        <p id="currentStress" class="text-xl font-semibold text-gray-900">-/10</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Physical Activity</p>
+                        <p id="currentActivity" class="text-xl font-semibold text-gray-900">-/10</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Predicted Disorder</p>
+                        <p id="currentDisorder" class="text-xl font-semibold text-gray-900">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Sleep Metrics Trend</h3>
+                    <div class="h-80">
+                        <canvas id="sleepMetricsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Drowsiness Analysis</h3>
+                    <div class="h-80">
+                        <canvas id="drowsinessChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="bg-white rounded-xl shadow-md">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Assessment History</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sleep Duration</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quality</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Drowsiness</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disorder Risk</th>
+                                <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> -->
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function calculateHealthScore(assessment) {
+            // Normalize each metric to a 0-100 scale and weight them
+            const sleepQualityScore = (assessment.quality_of_sleep / 10) * 100 * 0.3;
+            const sleepDurationScore = Math.min((assessment.sleep_duration / 8) * 100, 100) * 0.2;
+            const stressScore = ((10 - assessment.stress_level) / 10) * 100 * 0.15;
+            const activityScore = (assessment.physical_activity_level / 10) * 100 * 0.15;
+            const drowsinessScore = (100 - assessment.drowsy_percentage) * 0.2;
+
+            return Math.round((sleepQualityScore + sleepDurationScore + stressScore + activityScore + drowsinessScore) / 100 * 10);
+        }
+
+        function getTrendIndicator(current, previous) {
+            if (current > previous) return '↑';
+            if (current < previous) return '↓';
+            return '→';
+        }
+
+        function getAlertMessage(assessment) {
+            const alerts = [];
+            if (assessment.quality_of_sleep < 5) {
+                alerts.push('Low sleep quality detected');
+            }
+            if (assessment.sleep_duration < 6) {
+                alerts.push('Insufficient sleep duration');
+            }
+            if (assessment.drowsy_percentage > 50) {
+                alerts.push('High drowsiness risk detected');
+            }
+            if (assessment.stress_level > 7) {
+                alerts.push('High stress levels detected');
+            }
+            return alerts;
+        }
+
+        function initializeCharts() {
+            const sleepMetricsCtx = document.getElementById('sleepMetricsChart').getContext('2d');
+            const drowsinessCtx = document.getElementById('drowsinessChart').getContext('2d');
+
+            new Chart(sleepMetricsCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Sleep Quality',
+                            data: [],
+                            borderColor: 'rgb(147, 51, 234)',
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Sleep Duration',
+                            data: [],
+                            borderColor: 'rgb(59, 130, 246)',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+
+            new Chart(drowsinessCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Drowsiness %',
+                        data: [],
+                        borderColor: 'rgb(239, 68, 68)',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDashboard(data) {
+            // Update timestamp
+            document.getElementById('lastUpdate').textContent = `Last updated: ${moment(data.latest_assessment.timestamp).format('MMM D, YYYY HH:mm')}`;
+
+            // Update alerts
+            const alerts = getAlertMessage(data.latest_assessment);
+            document.getElementById('alertSection').innerHTML = alerts.length > 0 
+                ? `<div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Attention needed</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    ${alerts.map(alert => `<li>${alert}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                : '';
+
+            // Update key metrics
+            document.getElementById('avgSleepQuality').textContent = `${data.statistics.avg_sleep_quality.toFixed(1)}/10`;
+            document.getElementById('avgSleepDuration').textContent = `${data.statistics.avg_sleep_duration.toFixed(1)} hrs`;
+            document.getElementById('avgDrowsiness').textContent = `${data.statistics.avg_drowsiness.toFixed(1)}%`;
+            
+            const healthScore = calculateHealthScore(data.latest_assessment);
+            document.getElementById('healthScore').textContent = `${healthScore}/10`;
+
+            // Update trends
+            const history = data.history;
+            if (history.length >= 2) {
+                const qualityTrend = getTrendIndicator(history[0].quality_of_sleep, history[1].quality_of_sleep);
+                const durationTrend = getTrendIndicator(history[0].sleep_duration, history[1].sleep_duration);
+                const drowsinessTrend = getTrendIndicator(history[0].drowsy_percentage, history[1].drowsy_percentage);
+                
+                document.getElementById('qualityTrend').textContent = qualityTrend;
+                document.getElementById('durationTrend').textContent = durationTrend;
+                document.getElementById('drowsinessTrend').textContent = drowsinessTrend;
+            }
+
+            // Update latest assessment details
+            const latest = data.latest_assessment;
+            document.getElementById('currentSleepDuration').textContent = `${latest.sleep_duration} hrs`;
+            document.getElementById('currentSleepQuality').textContent = `${latest.quality_of_sleep}/10`;
+            document.getElementById('currentDrowsinessState').textContent = latest.drowsiness_state;
+            document.getElementById('currentHeartRate').textContent = `${latest.heart_rate} bpm`;
+            document.getElementById('currentSteps').textContent = latest.daily_steps.toLocaleString();
+            document.getElementById('currentStress').textContent = `${latest.stress_level}/10`;
+            document.getElementById('currentActivity').textContent = `${latest.physical_activity_level}/10`;
+            document.getElementById('currentDisorder').textContent = latest.predicted_sleep_disorder;
+
+            // Update history table
+            const tableBody = document.getElementById('historyTableBody');
+            tableBody.innerHTML = data.history.map(item => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${moment(item.timestamp).format('MMM D, YYYY HH:mm')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${item.sleep_duration} hrs
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${item.quality_of_sleep}/10
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${item.drowsiness_state === 'DROWSY' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+                            ${item.drowsiness_state}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${item.predicted_sleep_disorder}
+                    </td>
+              
+                </tr>
+            `).join('');
+
+            // Update charts
+            updateCharts(data.history);
+        }
+
+        function updateCharts(history) {
+            const sleepMetricsChart = Chart.getChart('sleepMetricsChart');
+            const drowsinessChart = Chart.getChart('drowsinessChart');
+
+            if (sleepMetricsChart && drowsinessChart) {
+                const labels = history.map(item => moment(item.timestamp).format('MMM D, HH:mm')).reverse();
+                const qualityData = history.map(item => item.quality_of_sleep).reverse();
+                const durationData = history.map(item => item.sleep_duration > 12 ? 12 : item.sleep_duration).reverse();
+                const drowsinessData = history.map(item => item.drowsy_percentage).reverse();
+
+                sleepMetricsChart.data.labels = labels;
+                sleepMetricsChart.data.datasets[0].data = qualityData;
+                sleepMetricsChart.data.datasets[1].data = durationData;
+                sleepMetricsChart.update();
+
+                drowsinessChart.data.labels = labels;
+                drowsinessChart.data.datasets[0].data = drowsinessData;
+                drowsinessChart.update();
+            }
+        }
+
+        function viewDetails(id) {
+            window.location.href = `/assessment/${id}`;
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            
+            // Fetch initial data
+            fetch('/api/dashboard-data')
+                .then(response => response.json())
+                .then(data => updateDashboard(data))
+                .catch(error => console.error('Error fetching dashboard data:', error));
+
+            // Refresh data every 5 minutes
+            setInterval(() => {
+                fetch('/api/dashboard-data')
+                    .then(response => response.json())
+                    .then(data => updateDashboard(data))
+                    .catch(error => console.error('Error fetching dashboard data:', error));
+            }, 300000);
+        });
+    </script>
+</body>
+</html>
