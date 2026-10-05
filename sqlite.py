@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import pandas as pd 
 from datetime import datetime
 
 class DatabaseManager:
